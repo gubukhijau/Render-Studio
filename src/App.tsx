@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Navbar } from './components/Navbar';
-import { LandingPage } from './components/LandingPage';
-import { RenderStudio } from './components/RenderStudio';
+import { SimpleRenderWorkspace } from './components/SimpleRenderWorkspace';
 import { Gallery } from './components/Gallery';
 import { AuthModal } from './components/AuthModal';
 import { SetupGuideModal } from './components/SetupGuideModal';
@@ -9,7 +8,7 @@ import { UserSession, ConfigStatus } from './types/architecture';
 import { getInitialSession, logOut } from './services/supabaseClient';
 
 export default function App() {
-  const [currentPage, setCurrentPage] = useState<'landing' | 'studio' | 'gallery' | 'docs'>('landing');
+  const [currentPage, setCurrentPage] = useState<'studio' | 'gallery' | 'docs'>('studio');
   const [user, setUser] = useState<UserSession>({
     id: 'guest_init',
     displayName: 'Guest Architect',
@@ -19,7 +18,6 @@ export default function App() {
   const [configStatus, setConfigStatus] = useState<ConfigStatus | null>(null);
   const [authModalOpen, setAuthModalOpen] = useState(false);
   const [docsModalOpen, setDocsModalOpen] = useState(false);
-  const [selectedSketchId, setSelectedSketchId] = useState<string | null>(null);
 
   useEffect(() => {
     // 1. Initialize user session
@@ -38,14 +36,6 @@ export default function App() {
       });
   }, []);
 
-  const handleStartRendering = (sketchId?: string) => {
-    if (sketchId) {
-      setSelectedSketchId(sketchId);
-    }
-    setCurrentPage('studio');
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  };
-
   const handleLogout = async () => {
     await logOut();
     const guest = await getInitialSession();
@@ -58,7 +48,7 @@ export default function App() {
       {/* Top Navigation */}
       <Navbar
         currentPage={currentPage}
-        setCurrentPage={(page) => {
+        setCurrentPage={(page: any) => {
           if (page === 'docs') {
             setDocsModalOpen(true);
           } else {
@@ -75,17 +65,9 @@ export default function App() {
 
       {/* Main View Area */}
       <main className="flex-1">
-        {currentPage === 'landing' && (
-          <LandingPage
-            onStartRendering={handleStartRendering}
-            onOpenDocs={() => setDocsModalOpen(true)}
-          />
-        )}
-
         {currentPage === 'studio' && (
-          <RenderStudio
+          <SimpleRenderWorkspace
             user={user}
-            initialSketchId={selectedSketchId}
             onViewGallery={() => {
               setCurrentPage('gallery');
               window.scrollTo({ top: 0, behavior: 'smooth' });

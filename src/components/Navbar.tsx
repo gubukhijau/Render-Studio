@@ -42,7 +42,7 @@ export const Navbar: React.FC<NavbarProps> = ({
         
         {/* Brand Logo */}
         <div 
-          onClick={() => setCurrentPage('landing')} 
+          onClick={() => setCurrentPage('studio')} 
           className="flex cursor-pointer items-center gap-3 group transition"
         >
           <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-gradient-to-br from-[#c58f58] via-[#a36f3c] to-[#6a421b] shadow-md shadow-amber-950/30 group-hover:scale-105 transition-transform duration-200">
@@ -66,39 +66,27 @@ export const Navbar: React.FC<NavbarProps> = ({
         {/* Center Navigation Links */}
         <nav className="hidden md:flex items-center gap-1 rounded-full border border-[#222731] bg-[#14171e]/80 p-1">
           <button
-            onClick={() => setCurrentPage('landing')}
-            className={`flex items-center gap-2 rounded-full px-4 py-1.5 text-xs font-medium transition ${
-              currentPage === 'landing'
-                ? 'bg-[#222732] text-[#f5f4ef] shadow-sm'
-                : 'text-[#a6a49c] hover:text-[#f5f4ef] hover:bg-[#1b1f28]'
-            }`}
-          >
-            <Compass className="h-3.5 w-3.5 text-[#c58f58]" />
-            Overview
-          </button>
-
-          <button
             onClick={() => setCurrentPage('studio')}
             className={`flex items-center gap-2 rounded-full px-4 py-1.5 text-xs font-medium transition ${
               currentPage === 'studio'
-                ? 'bg-[#c58f58] text-[#0a0b0d] font-semibold shadow-sm shadow-amber-900/30'
+                ? 'bg-[#c58f58] text-[#0a0b0d] font-semibold shadow-sm'
                 : 'text-[#a6a49c] hover:text-[#f5f4ef] hover:bg-[#1b1f28]'
             }`}
           >
             <Sparkles className="h-3.5 w-3.5" />
-            Render Studio
+            Workspace
           </button>
 
           <button
             onClick={() => setCurrentPage('gallery')}
             className={`flex items-center gap-2 rounded-full px-4 py-1.5 text-xs font-medium transition ${
               currentPage === 'gallery'
-                ? 'bg-[#222732] text-[#f5f4ef] shadow-sm'
+                ? 'bg-[#222732] text-[#f5f4ef] shadow-sm font-semibold'
                 : 'text-[#a6a49c] hover:text-[#f5f4ef] hover:bg-[#1b1f28]'
             }`}
           >
             <ImageIcon className="h-3.5 w-3.5 text-[#c58f58]" />
-            Gallery
+            Galeri
           </button>
         </nav>
 
@@ -205,22 +193,13 @@ export const Navbar: React.FC<NavbarProps> = ({
       {/* Mobile Sub-Navigation Bar */}
       <div className="md:hidden flex items-center justify-around border-t border-[#222731] bg-[#0f1115] py-2 px-4">
         <button
-          onClick={() => setCurrentPage('landing')}
-          className={`flex flex-col items-center gap-1 text-[11px] ${
-            currentPage === 'landing' ? 'text-[#d8a876] font-semibold' : 'text-[#8e8d85]'
-          }`}
-        >
-          <Compass className="h-4 w-4" />
-          <span>Home</span>
-        </button>
-        <button
           onClick={() => setCurrentPage('studio')}
           className={`flex flex-col items-center gap-1 text-[11px] ${
             currentPage === 'studio' ? 'text-[#d8a876] font-semibold' : 'text-[#8e8d85]'
           }`}
         >
           <Sparkles className="h-4 w-4" />
-          <span>Studio</span>
+          <span>Workspace</span>
         </button>
         <button
           onClick={() => setCurrentPage('gallery')}
@@ -229,16 +208,14 @@ export const Navbar: React.FC<NavbarProps> = ({
           }`}
         >
           <ImageIcon className="h-4 w-4" />
-          <span>Gallery</span>
+          <span>Galeri</span>
         </button>
         <button
           onClick={onOpenDocs}
-          className={`flex flex-col items-center gap-1 text-[11px] ${
-            currentPage === 'docs' ? 'text-[#d8a876] font-semibold' : 'text-[#8e8d85]'
-          }`}
+          className="flex flex-col items-center gap-1 text-[11px] text-[#8e8d85]"
         >
           <Database className="h-4 w-4" />
-          <span>Config</span>
+          <span>Docs</span>
         </button>
       </div>
     </header>
