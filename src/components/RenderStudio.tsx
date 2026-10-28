@@ -60,7 +60,7 @@ export const RenderStudio: React.FC<RenderStudioProps> = ({
   const [lighting, setLighting] = useState<LightingOption>('golden hour');
   const [aspectRatio, setAspectRatio] = useState<AspectRatio>('16:9');
   const [additionalPrompt, setAdditionalPrompt] = useState('');
-  const [model, setModel] = useState<AIModel>('gemini-nano-banana-2.1');
+  const [model, setModel] = useState<AIModel>('free-architect-engine');
   const [imageSize, setImageSize] = useState<Resolution>('1K');
 
   // Image Upload State
@@ -131,41 +131,70 @@ export const RenderStudio: React.FC<RenderStudioProps> = ({
     }
   };
 
-  // Handle File selection
+  // Handle File selection with client-side optimization (downscales very large images to prevent proxy payload timeouts)
   const handleFile = (file: File) => {
     // Validate MIME type
     const validMimes = ['image/jpeg', 'image/png', 'image/webp'];
     if (!validMimes.includes(file.type)) {
-      setErrorMessage('Invalid file format. Please upload JPEG, PNG, or WebP images.');
+      setErrorMessage('Format berkas tidak didukung. Harap unggah gambar berformat JPEG, PNG, atau WebP.');
       return;
     }
 
     // Validate size (15MB)
     if (file.size > 15 * 1024 * 1024) {
-      setErrorMessage('File size exceeds 15MB limit. Please upload a smaller image.');
+      setErrorMessage('Ukuran berkas melebihi batas 15MB. Silakan unggah gambar yang lebih ringkas.');
       return;
     }
 
     setErrorMessage(null);
-    setInputMimeType(file.type);
 
     const reader = new FileReader();
     reader.onload = (e) => {
-      const dataUrl = e.target?.result as string;
-      setInputImageBase64(dataUrl);
-
-      // Measure dimensions
+      const rawDataUrl = e.target?.result as string;
+      
       const img = new Image();
       img.onload = () => {
-        setInputImageDimensions({ width: img.width, height: img.height });
-      };
-      img.src = dataUrl;
+        const MAX_DIM = 1600;
+        let { width, height } = img;
+        
+        // Scale down if larger than MAX_DIM
+        if (width > MAX_DIM || height > MAX_DIM) {
+          if (width > height) {
+            height = Math.round((height * MAX_DIM) / width);
+            width = MAX_DIM;
+          } else {
+            width = Math.round((width * MAX_DIM) / height);
+            height = MAX_DIM;
+          }
 
-      // Update title if generic
-      if (projectTitle === 'Modern Tropical Villa') {
-        const cleanName = file.name.replace(/\.[^/.]+$/, '').replace(/[-_]/g, ' ');
-        setProjectTitle(cleanName);
-      }
+          const canvas = document.createElement('canvas');
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext('2d');
+          if (ctx) {
+            ctx.drawImage(img, 0, 0, width, height);
+            const optimizedDataUrl = canvas.toDataURL('image/jpeg', 0.92);
+            setInputImageBase64(optimizedDataUrl);
+            setInputMimeType('image/jpeg');
+            setInputImageDimensions({ width, height });
+          } else {
+            setInputImageBase64(rawDataUrl);
+            setInputMimeType(file.type);
+            setInputImageDimensions({ width: img.width, height: img.height });
+          }
+        } else {
+          setInputImageBase64(rawDataUrl);
+          setInputMimeType(file.type);
+          setInputImageDimensions({ width: img.width, height: img.height });
+        }
+
+        // Update title if generic
+        if (projectTitle === 'Modern Tropical Villa') {
+          const cleanName = file.name.replace(/\.[^/.]+$/, '').replace(/[-_]/g, ' ');
+          setProjectTitle(cleanName);
+        }
+      };
+      img.src = rawDataUrl;
     };
     reader.readAsDataURL(file);
   };
@@ -194,7 +223,7 @@ export const RenderStudio: React.FC<RenderStudioProps> = ({
   // ---------------------------------------------------------------------------
   const handleGenerateRender = async () => {
     if (!inputImageBase64) {
-      setErrorMessage('Please upload an architectural sketch or select a sample sketch before generating.');
+      setErrorMessage('Harap unggah sketsa arsitektur atau pilih sketsa contoh sebelum melakukan render.');
       return;
     }
 
@@ -203,15 +232,15 @@ export const RenderStudio: React.FC<RenderStudioProps> = ({
     setSavedToGallery(false);
 
     // Progressive status updates
-    setProgressStep('Analyzing building geometry and architectural massing...');
+    setProgressStep('Menganalisis massa bangunan dan proporsi geometri...');
     const t1 = setTimeout(() => {
-      setProgressStep('Calculating physical material reflections and surface textures...');
+      setProgressStep('Mengalkulasi tekstur material fisik dan pantulan cahaya...');
     }, 2800);
     const t2 = setTimeout(() => {
-      setProgressStep('Synthesizing camera perspective and ambient lighting...');
+      setProgressStep('Menyusun perspektif kamera dan pencahayaan atmosfer...');
     }, 6000);
     const t3 = setTimeout(() => {
-      setProgressStep('Finalizing photorealistic high-resolution rendering...');
+      setProgressStep('Menyelesaikan visualisasi fotorealistik resolusi tinggi...');
     }, 9500);
 
     try {
@@ -240,10 +269,23 @@ export const RenderStudio: React.FC<RenderStudioProps> = ({
       clearTimeout(t2);
       clearTimeout(t3);
 
-      const data = await response.json();
+      const responseText = await response.text();
+      let data: any;
+
+      try {
+        data = JSON.parse(responseText);
+      } catch {
+        if (response.status === 504 || response.status === 502) {
+          throw new Error('Permintaan render melebihi batas waktu server (Gateway Timeout). Mohon coba kembali.');
+        } else if (response.status === 413) {
+          throw new Error('Ukuran payload gambar terlalu besar untuk diproses.');
+        } else {
+          throw new Error(`Server mengembalikan respons non-JSON (Kode HTTP: ${response.status}). Periksa koneksi atau kuota API.`);
+        }
+      }
 
       if (!response.ok || !data.success) {
-        throw new Error(data.message || data.error || 'Failed to generate render.');
+        throw new Error(data.message || data.error || 'Gagal menghasilkan render visualisasi.');
       }
 
       const newProject: RenderProject = {
@@ -888,15 +930,19 @@ export const RenderStudio: React.FC<RenderStudioProps> = ({
                 <Cpu className="h-3.5 w-3.5 text-[#c58f58]" />
                 AI Model Engine
               </label>
-              <span className="text-[10px] text-[#c58f58] font-mono">Official SDK</span>
+              <span className="text-[10px] text-emerald-400 font-mono flex items-center gap-1">
+                <span className="inline-block h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                100% Gratis
+              </span>
             </div>
             <select
               value={model}
               onChange={(e) => setModel(e.target.value as AIModel)}
               className="w-full rounded-lg border border-[#2a303e] bg-[#171b23] px-3 py-2 text-xs text-[#f5f4ef] focus:border-[#c58f58] focus:outline-none transition font-mono"
             >
-              <option value="gemini-nano-banana-2.1">gemini-nano-banana-2.1 (Recommended: 1K-4K High-Quality)</option>
-              <option value="gemini-3.1-flash-lite-image">gemini-3.1-flash-lite-image (Fast Generation)</option>
+              <option value="free-architect-engine">AI Gratis (Free Photorealistic Engine - 100% Gratis &amp; Tanpa Bayar)</option>
+              <option value="gemini-nano-banana-2.1">Google Gemini Nano Banana 2.1 (Paid API Key)</option>
+              <option value="gemini-3.1-flash-lite-image">Google Gemini Flash Lite Image (Paid API Key)</option>
             </select>
           </div>
 

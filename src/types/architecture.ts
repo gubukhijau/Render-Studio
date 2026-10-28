@@ -17,7 +17,10 @@ export type LightingOption =
 
 export type AspectRatio = '1:1' | '4:3' | '3:2' | '16:9';
 
-export type AIModel = 'gemini-nano-banana-2.1' | 'gemini-3.1-flash-lite-image';
+export type AIModel = 
+  | 'free-architect-engine'
+  | 'gemini-nano-banana-2.1' 
+  | 'gemini-3.1-flash-lite-image';
 
 export type Resolution = '1K' | '2K' | '4K';
 

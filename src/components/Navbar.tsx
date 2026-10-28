@@ -108,14 +108,14 @@ export const Navbar: React.FC<NavbarProps> = ({
           {/* Active AI Model Badge */}
           <div 
             onClick={onOpenDocs}
-            className="hidden sm:flex items-center gap-2 rounded-md border border-[#292e38] bg-[#15181e] px-2.5 py-1 text-[11px] text-[#a6a49c] hover:border-[#c58f58]/50 cursor-pointer transition"
-            title="Active Model: Gemini Nano Banana 2.1 (Configurable via Docs)"
+            className="hidden sm:flex items-center gap-2 rounded-md border border-emerald-900/40 bg-emerald-950/20 px-2.5 py-1 text-[11px] text-emerald-400 hover:border-emerald-500/50 cursor-pointer transition"
+            title="Engine: AI Gratis (100% Free Photorealistic Architecture Engine)"
           >
             <span className="relative flex h-2 w-2">
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
               <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
             </span>
-            <span className="font-mono text-[#d8a876]">nano-banana-2.1</span>
+            <span className="font-mono font-medium text-emerald-300">AI Gratis (Aktif)</span>
           </div>
 
           {/* Database Setup Indicator */}

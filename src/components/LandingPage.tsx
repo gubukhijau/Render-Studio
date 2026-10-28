@@ -82,7 +82,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({
           {/* Engineering Pill */}
           <div className="inline-flex items-center gap-2 rounded-full border border-[#373d4b] bg-[#161a22]/90 px-3.5 py-1 text-xs font-mono text-[#d8a876] shadow-inner mb-6 backdrop-blur">
             <Cpu className="h-3.5 w-3.5 text-[#c58f58]" />
-            <span>POWERED BY GOOGLE GEMINI NANO-BANANA-2.1 &amp; SUPABASE</span>
+            <span>POWERED BY FREE AI ARCHITECTURAL ENGINE &amp; SUPABASE</span>
           </div>
 
           {/* Main Headline */}
