@@ -1,0 +1,58 @@
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    --font-sans: 'Manrope', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    --font-heading: 'Space Grotesk', 'Manrope', sans-serif;
+    --color-charcoal-950: #0a0b0d;
+    --color-charcoal-900: #0f1115;
+    --color-charcoal-850: #15181e;
+    --color-charcoal-800: #1c2027;
+    --color-charcoal-700: #292e38;
+    --color-bronze-500: #c58f58;
+    --color-bronze-400: #d8a876;
+    --color-bone: #f5f4ef;
+    --color-bone-muted: #b7b5ad;
+  }
+
+  body {
+    font-family: var(--font-sans);
+    background-color: var(--color-charcoal-900);
+    color: var(--color-bone);
+    overflow-x: hidden;
+  }
+
+  h1, h2, h3, h4, .font-heading {
+    font-family: var(--font-heading);
+    letter-spacing: -0.02em;
+  }
+}
+
+/* Custom Architectural Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #0f1115;
+}
+::-webkit-scrollbar-thumb {
+  background: #292e38;
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #c58f58;
+}
+
+/* Blueprint grid pattern */
+.bg-blueprint-grid {
+  background-size: 32px 32px;
+  background-image: 
+    linear-gradient(to right, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+}
+
+.bg-dot-matrix {
+  background-size: 24px 24px;
+  background-image: radial-gradient(rgba(197, 143, 88, 0.12) 1px, transparent 0);
+}

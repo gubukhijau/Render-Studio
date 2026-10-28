@@ -1,0 +1,6 @@
+{
+  "name": "Architecture Render Studio",
+  "description": "Transform architectural sketches, facade drawings, interior layouts, and building concepts into photorealistic 3D architectural visualizations with AI.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
